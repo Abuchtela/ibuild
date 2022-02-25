@@ -147,6 +147,24 @@ class BuildRule: PackageRuleProtocol {
                     }
                 } catch {
                     print("Lipo failed: \(error.localizedDescription)")
+            let libraryOutputs = rule.package.build?.outputs ?? []
+
+            // LIPO to create fat binary for each library
+            for libraryName in libraryOutputs {
+                let archMap = rule.architectures.map { arch in
+                    return (arch, result[arch]!.appendingPathComponent(libraryName))
+                }
+
+                let libraryURL = rule.buildSystem.buildProductsRoot.appendingPathComponent(libraryName)
+                if !FileManager.default.fileExists(atPath: libraryURL.path) {
+                    do {
+                        try self.lipo(
+                            from: archMap,
+                            toURL: libraryURL
+                        )
+                    } catch {
+                        print("Lipo failed: \(error.localizedDescription)")
+                    }
                 }
             }
         }

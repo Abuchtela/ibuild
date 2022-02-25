@@ -76,6 +76,7 @@ class Builder {
             "SDKROOT": self.sysroot.path,
             "BUILDROOT": self.buildProductsRoot.path,
             "PKG_CONFIG_PATH": self.buildProductsRoot.appendingPathComponent("lib").appendingPathComponent("pkgconfig").path
+            "BUILDROOT": self.buildProductsRoot.path
         ]
 
         try self.setup()
@@ -99,6 +100,7 @@ class Builder {
         try self.make(
             fromURL: configureOutput,
             buildOutputURL: buildOutput
+            fromURL: configureOutput
         )
         try self.install(
             fromURL: configureOutput,
